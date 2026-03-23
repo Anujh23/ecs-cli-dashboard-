@@ -30,7 +30,7 @@ class DashboardApp {
         this.initElements();
         this.bindEvents();
         this.setDate();
-        this.initTheme();
+
         this.updateDisplay();
         this.updateSummary();
     }
@@ -108,7 +108,6 @@ class DashboardApp {
 
         this.el.updateBtn = document.getElementById('update-btn');
         this.el.resetBtn = document.getElementById('reset-btn');
-        this.el.themeToggle = document.getElementById('theme-toggle');
         this.el.productCards = {
             ecs: document.querySelector('[data-product="ecs"]'),
             cli: document.querySelector('[data-product="cli"]')
@@ -119,7 +118,6 @@ class DashboardApp {
     bindEvents() {
         this.el.updateBtn.addEventListener('click', () => this.updateDashboard());
         this.el.resetBtn.addEventListener('click', () => this.resetDashboard());
-        this.el.themeToggle.addEventListener('click', () => this.toggleTheme());
 
         // Enter key on any input
         document.querySelectorAll('.input').forEach(input => {
@@ -176,29 +174,6 @@ class DashboardApp {
             dateEl.textContent = now.toLocaleDateString('en-IN', {
                 weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
             });
-        }
-    }
-
-    // ─── Theme ───
-    initTheme() {
-        const saved = localStorage.getItem('ecs-cli-theme');
-        if (saved === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        } else if (saved === 'light') {
-            document.documentElement.removeAttribute('data-theme');
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
-    }
-
-    toggleTheme() {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        if (isDark) {
-            document.documentElement.removeAttribute('data-theme');
-            localStorage.setItem('ecs-cli-theme', 'light');
-        } else {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('ecs-cli-theme', 'dark');
         }
     }
 
