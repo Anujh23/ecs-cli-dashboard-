@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECS & CLI - Performance Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-inner">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1>ECS & CLI Dashboard</h1>
+                    <p class="brand-subtitle">Performance Tracker</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <span class="date-display" id="current-date"></span>
+                <button class="btn btn-icon" id="theme-toggle" title="Toggle theme">
+                    <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Combined Disbursement Target -->
+        <section class="target-hero">
+            <div class="target-hero-card">
+                <div class="target-hero-header">
+                    <span class="badge badge-primary">Disbursement Target</span>
+                    <button class="btn btn-ghost btn-sm edit-target-btn" data-target="combined" title="Edit Target">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        Edit
+                    </button>
+                </div>
+                <div class="target-hero-body">
+                    <div class="target-main-value" id="combined-target-display">&#8377;9,00,00,000</div>
+                    <div class="target-sub-label">Total Target</div>
+                    <div class="target-edit-row hidden" id="combined-target-edit">
+                        <input type="text" class="input input-lg" id="combined-target-input" placeholder="e.g., 90000000" inputmode="numeric">
+                        <button class="btn btn-primary btn-sm" id="combined-target-save">Save</button>
+                        <button class="btn btn-ghost btn-sm" id="combined-target-cancel">Cancel</button>
+                    </div>
+                </div>
+                <div class="target-hero-progress">
+                    <div class="target-current">
+                        <span class="target-current-value" id="combined-current">&#8377;0</span>
+                        <span class="target-current-label">Disbursed</span>
+                    </div>
+                    <div class="target-remaining">
+                        <span class="target-remaining-value" id="combined-to-go">&#8377;9,00,00,000</span>
+                        <span class="target-remaining-label">Remaining</span>
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill progress-fill-hero" id="combined-progress"></div>
+                    </div>
+                    <span class="progress-text" id="combined-percentage">0%</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary Cards -->
+        <section class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-card-icon icon-leads">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="summary-card-content">
+                    <span class="summary-label">Fresh Leads Today</span>
+                    <span class="summary-value" id="total-fresh-leads">0</span>
+                    <div class="summary-breakdown">
+                        <span>ECS: <strong id="ecs-fresh-summary">0</strong></span>
+                        <span>CLI: <strong id="cli-fresh-summary">0</strong></span>
+                    </div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-icon icon-amount">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="summary-card-content">
+                    <span class="summary-label">Total Amount Today</span>
+                    <span class="summary-value" id="total-amount-summary">&#8377;0</span>
+                    <div class="summary-breakdown">
+                        <span>ECS: <strong id="ecs-amount-summary">&#8377;0</strong></span>
+                        <span>CLI: <strong id="cli-amount-summary">&#8377;0</strong></span>
+                    </div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-icon icon-disbursement">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                </div>
+                <div class="summary-card-content">
+                    <span class="summary-label">Total Disbursed</span>
+                    <span class="summary-value" id="total-disbursed-summary">&#8377;0</span>
+                    <div class="summary-breakdown">
+                        <span>ECS: <strong id="ecs-disbursed-summary">&#8377;0</strong></span>
+                        <span>CLI: <strong id="cli-disbursed-summary">&#8377;0</strong></span>
+                    </div>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-icon icon-collection">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                </div>
+                <div class="summary-card-content">
+                    <span class="summary-label">Total Collected</span>
+                    <span class="summary-value" id="total-collected-summary">&#8377;0</span>
+                    <div class="summary-breakdown">
+                        <span>ECS: <strong id="ecs-collected-summary">&#8377;0</strong></span>
+                        <span>CLI: <strong id="cli-collected-summary">&#8377;0</strong></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Cards -->
+        <section class="products-grid">
+            <!-- ECS Product Card -->
+            <div class="product-card" data-product="ecs">
+                <div class="product-header">
+                    <div class="product-title-group">
+                        <span class="product-dot dot-ecs"></span>
+                        <h2 class="product-name">ECS</h2>
+                    </div>
+                    <div class="product-status" id="ecs-status"></div>
+                </div>
+
+                <!-- Fresh Leads -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Fresh Leads</h3>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="ecs-fresh-leads">0</span>
+                        <span class="metric-label">Today's Count</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="number" id="ecs-fresh-input" class="input" placeholder="e.g., 25" min="0">
+                    </div>
+                </div>
+
+                <!-- Total Amount -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Total Amount</h3>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="ecs-total-amount">&#8377;0</span>
+                        <span class="metric-label">Today's Total</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="ecs-amount-input" class="input" placeholder="e.g., 2500000" inputmode="numeric">
+                    </div>
+                </div>
+
+                <!-- Disbursement -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Disbursement</h3>
+                        <button class="btn btn-ghost btn-xs edit-target-btn" data-target="ecs-disbursement" title="Edit Target">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="ecs-disbursed">&#8377;0</span>
+                        <span class="metric-label" id="ecs-disbursement-target-label">Target: &#8377;4,25,00,000</span>
+                    </div>
+                    <div class="target-edit-row hidden" id="ecs-disbursement-target-edit">
+                        <input type="text" class="input input-sm" id="ecs-disbursement-target-input" placeholder="Target amount" inputmode="numeric">
+                        <button class="btn btn-primary btn-xs target-save-btn" data-target="ecs-disbursement">Save</button>
+                        <button class="btn btn-ghost btn-xs target-cancel-btn" data-target="ecs-disbursement">Cancel</button>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-fill-ecs" id="ecs-disbursement-progress"></div>
+                        </div>
+                        <span class="progress-text" id="ecs-disbursement-percentage">0%</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="ecs-disbursement-input" class="input" placeholder="e.g., 3500000" inputmode="numeric">
+                    </div>
+                </div>
+
+                <!-- Collection -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Collection</h3>
+                        <button class="btn btn-ghost btn-xs edit-target-btn" data-target="ecs-collection" title="Edit Target">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="ecs-collected">&#8377;0</span>
+                        <span class="metric-label" id="ecs-collection-target-label">Target: &#8377;4,14,96,322</span>
+                    </div>
+                    <div class="target-edit-row hidden" id="ecs-collection-target-edit">
+                        <input type="text" class="input input-sm" id="ecs-collection-target-input" placeholder="Target amount" inputmode="numeric">
+                        <button class="btn btn-primary btn-xs target-save-btn" data-target="ecs-collection">Save</button>
+                        <button class="btn btn-ghost btn-xs target-cancel-btn" data-target="ecs-collection">Cancel</button>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-fill-ecs-alt" id="ecs-collection-progress"></div>
+                        </div>
+                        <span class="progress-text" id="ecs-collection-percentage">0%</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="ecs-collection-input" class="input" placeholder="e.g., 4000000" inputmode="numeric">
+                    </div>
+                </div>
+            </div>
+
+            <!-- CLI Product Card -->
+            <div class="product-card" data-product="cli">
+                <div class="product-header">
+                    <div class="product-title-group">
+                        <span class="product-dot dot-cli"></span>
+                        <h2 class="product-name">CLI</h2>
+                    </div>
+                    <div class="product-status" id="cli-status"></div>
+                </div>
+
+                <!-- Fresh Leads -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Fresh Leads</h3>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="cli-fresh-leads">0</span>
+                        <span class="metric-label">Today's Count</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="number" id="cli-fresh-input" class="input" placeholder="e.g., 30" min="0">
+                    </div>
+                </div>
+
+                <!-- Total Amount -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Total Amount</h3>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="cli-total-amount">&#8377;0</span>
+                        <span class="metric-label">Today's Total</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="cli-amount-input" class="input" placeholder="e.g., 3000000" inputmode="numeric">
+                    </div>
+                </div>
+
+                <!-- Disbursement -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Disbursement</h3>
+                        <button class="btn btn-ghost btn-xs edit-target-btn" data-target="cli-disbursement" title="Edit Target">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="cli-disbursed">&#8377;0</span>
+                        <span class="metric-label" id="cli-disbursement-target-label">Target: &#8377;4,75,00,000</span>
+                    </div>
+                    <div class="target-edit-row hidden" id="cli-disbursement-target-edit">
+                        <input type="text" class="input input-sm" id="cli-disbursement-target-input" placeholder="Target amount" inputmode="numeric">
+                        <button class="btn btn-primary btn-xs target-save-btn" data-target="cli-disbursement">Save</button>
+                        <button class="btn btn-ghost btn-xs target-cancel-btn" data-target="cli-disbursement">Cancel</button>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-fill-cli" id="cli-disbursement-progress"></div>
+                        </div>
+                        <span class="progress-text" id="cli-disbursement-percentage">0%</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="cli-disbursement-input" class="input" placeholder="e.g., 3800000" inputmode="numeric">
+                    </div>
+                </div>
+
+                <!-- Collection -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Collection</h3>
+                        <button class="btn btn-ghost btn-xs edit-target-btn" data-target="cli-collection" title="Edit Target">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="cli-collected">&#8377;0</span>
+                        <span class="metric-label" id="cli-collection-target-label">Target: &#8377;5,42,56,582</span>
+                    </div>
+                    <div class="target-edit-row hidden" id="cli-collection-target-edit">
+                        <input type="text" class="input input-sm" id="cli-collection-target-input" placeholder="Target amount" inputmode="numeric">
+                        <button class="btn btn-primary btn-xs target-save-btn" data-target="cli-collection">Save</button>
+                        <button class="btn btn-ghost btn-xs target-cancel-btn" data-target="cli-collection">Cancel</button>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-fill-cli-alt" id="cli-collection-progress"></div>
+                        </div>
+                        <span class="progress-text" id="cli-collection-percentage">0%</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="cli-collection-input" class="input" placeholder="e.g., 4500000" inputmode="numeric">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Action Bar -->
+        <section class="action-bar">
+            <button id="update-btn" class="btn btn-primary btn-lg">
+                <span class="btn-text">Update Dashboard</span>
+                <span class="spinner hidden"></span>
+            </button>
+            <button id="reset-btn" class="btn btn-outline btn-lg">Reset All</button>
+        </section>
+
+        <!-- Quick Fill -->
+        <section class="quick-fill">
+            <p class="quick-fill-label">Quick Fill</p>
+            <div class="quick-fill-buttons">
+                <button class="btn btn-ghost btn-sm sample-btn"
+                    data-ecs-disbursed="35000000" data-ecs-collected="40000000"
+                    data-cli-disbursed="38000000" data-cli-collected="45000000"
+                    data-ecs-fresh="25" data-cli-fresh="30"
+                    data-ecs-amount="2500000" data-cli-amount="3000000">Sample 1</button>
+                <button class="btn btn-ghost btn-sm sample-btn"
+                    data-ecs-disbursed="25000000" data-ecs-collected="30000000"
+                    data-cli-disbursed="20000000" data-cli-collected="25000000"
+                    data-ecs-fresh="15" data-cli-fresh="20"
+                    data-ecs-amount="1500000" data-cli-amount="2000000">Sample 2</button>
+                <button class="btn btn-ghost btn-sm sample-btn"
+                    data-ecs-disbursed="44100000" data-ecs-collected="47386551"
+                    data-cli-disbursed="45100000" data-cli-collected="53336813"
+                    data-ecs-fresh="50" data-cli-fresh="55"
+                    data-ecs-amount="5000000" data-cli-amount="5500000">Target Met</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
