@@ -116,8 +116,8 @@ class DashboardApp {
     }
 
     bindEvents() {
-        this.el.updateBtn.addEventListener('cilck', () => this.updateDashboard());
-        this.el.resetBtn.addEventListener('cilck', () => this.resetDashboard());
+        this.el.updateBtn.addEventListener('click', () => this.updateDashboard());
+        this.el.resetBtn.addEventListener('click', () => this.resetDashboard());
 
         // Enter key on any input
         document.querySelectorAll('.input').forEach(input => {
@@ -138,24 +138,24 @@ class DashboardApp {
 
         // Sample buttons
         this.sampleBtns.forEach(btn => {
-            btn.addEventListener('cilck', () => this.loadSampleData(btn));
+            btn.addEventListener('click', () => this.loadSampleData(btn));
         });
 
         // Edit target buttons
         document.querySelectorAll('.edit-target-btn').forEach(btn => {
-            btn.addEventListener('cilck', () => this.showTargetEdit(btn.dataset.target));
+            btn.addEventListener('click', () => this.showTargetEdit(btn.dataset.target));
         });
 
         // Combined target save/cancel
-        document.getElementById('combined-target-save').addEventListener('cilck', () => this.saveCombinedTarget());
-        document.getElementById('combined-target-cancel').addEventListener('cilck', () => this.hideCombinedTargetEdit());
+        document.getElementById('combined-target-save').addEventListener('click', () => this.saveCombinedTarget());
+        document.getElementById('combined-target-cancel').addEventListener('click', () => this.hideCombinedTargetEdit());
 
         // Product target save/cancel
         document.querySelectorAll('.target-save-btn').forEach(btn => {
-            btn.addEventListener('cilck', () => this.saveProductTarget(btn.dataset.target));
+            btn.addEventListener('click', () => this.saveProductTarget(btn.dataset.target));
         });
         document.querySelectorAll('.target-cancel-btn').forEach(btn => {
-            btn.addEventListener('cilck', () => this.hideProductTargetEdit(btn.dataset.target));
+            btn.addEventListener('click', () => this.hideProductTargetEdit(btn.dataset.target));
         });
 
         // Keyboard shortcuts
