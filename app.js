@@ -12,8 +12,8 @@ class DashboardApp {
                     freshLeads: 0,
                     totalAmount: 0
                 },
-                cli: {
-                    name: 'CLI',
+                cil: {
+                    name: 'CIL',
                     disbursementTarget: 47500000,
                     collectionTarget: 54256582,
                     disbursed: 0,
@@ -38,11 +38,11 @@ class DashboardApp {
     // ─── Storage ───
     loadFromStorage() {
         try {
-            const saved = localStorage.getItem('ecs-cli-dashboard');
+            const saved = localStorage.getItem('ecs-cil-dashboard');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 this.data.combinedTarget = parsed.combinedTarget ?? this.data.combinedTarget;
-                ['ecs', 'cli'].forEach(key => {
+                ['ecs', 'cil'].forEach(key => {
                     if (parsed.products && parsed.products[key]) {
                         Object.assign(this.data.products[key], parsed.products[key]);
                     }
@@ -53,7 +53,7 @@ class DashboardApp {
 
     saveToStorage() {
         try {
-            localStorage.setItem('ecs-cli-dashboard', JSON.stringify(this.data));
+            localStorage.setItem('ecs-cil-dashboard', JSON.stringify(this.data));
         } catch (e) { /* ignore */ }
     }
 
@@ -76,7 +76,7 @@ class DashboardApp {
         this.el.totalCollectedSummary = document.getElementById('total-collected-summary');
 
         // Product summary
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             this.el[`${p}FreshSummary`] = document.getElementById(`${p}-fresh-summary`);
             this.el[`${p}AmountSummary`] = document.getElementById(`${p}-amount-summary`);
             this.el[`${p}DisbursedSummary`] = document.getElementById(`${p}-disbursed-summary`);
@@ -84,7 +84,7 @@ class DashboardApp {
         });
 
         // Product cards
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             this.el[`${p}FreshLeads`] = document.getElementById(`${p}-fresh-leads`);
             this.el[`${p}TotalAmount`] = document.getElementById(`${p}-total-amount`);
             this.el[`${p}Disbursed`] = document.getElementById(`${p}-disbursed`);
@@ -110,14 +110,14 @@ class DashboardApp {
         this.el.resetBtn = document.getElementById('reset-btn');
         this.el.productCards = {
             ecs: document.querySelector('[data-product="ecs"]'),
-            cli: document.querySelector('[data-product="cli"]')
+            cil: document.querySelector('[data-product="cil"]')
         };
         this.sampleBtns = document.querySelectorAll('.sample-btn');
     }
 
     bindEvents() {
-        this.el.updateBtn.addEventListener('click', () => this.updateDashboard());
-        this.el.resetBtn.addEventListener('click', () => this.resetDashboard());
+        this.el.updateBtn.addEventListener('cilck', () => this.updateDashboard());
+        this.el.resetBtn.addEventListener('cilck', () => this.resetDashboard());
 
         // Enter key on any input
         document.querySelectorAll('.input').forEach(input => {
@@ -138,24 +138,24 @@ class DashboardApp {
 
         // Sample buttons
         this.sampleBtns.forEach(btn => {
-            btn.addEventListener('click', () => this.loadSampleData(btn));
+            btn.addEventListener('cilck', () => this.loadSampleData(btn));
         });
 
         // Edit target buttons
         document.querySelectorAll('.edit-target-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.showTargetEdit(btn.dataset.target));
+            btn.addEventListener('cilck', () => this.showTargetEdit(btn.dataset.target));
         });
 
         // Combined target save/cancel
-        document.getElementById('combined-target-save').addEventListener('click', () => this.saveCombinedTarget());
-        document.getElementById('combined-target-cancel').addEventListener('click', () => this.hideCombinedTargetEdit());
+        document.getElementById('combined-target-save').addEventListener('cilck', () => this.saveCombinedTarget());
+        document.getElementById('combined-target-cancel').addEventListener('cilck', () => this.hideCombinedTargetEdit());
 
         // Product target save/cancel
         document.querySelectorAll('.target-save-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.saveProductTarget(btn.dataset.target));
+            btn.addEventListener('cilck', () => this.saveProductTarget(btn.dataset.target));
         });
         document.querySelectorAll('.target-cancel-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.hideProductTargetEdit(btn.dataset.target));
+            btn.addEventListener('cilck', () => this.hideProductTargetEdit(btn.dataset.target));
         });
 
         // Keyboard shortcuts
@@ -236,7 +236,7 @@ class DashboardApp {
         if (this.isAnimating) return;
 
         const values = {};
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             values[p] = {
                 disbursed: parseInt(this.el[`${p}DisbursementInput`].value) || 0,
                 collected: parseInt(this.el[`${p}CollectionInput`].value) || 0,
@@ -246,7 +246,7 @@ class DashboardApp {
         });
 
         // Validate
-        const allPositive = ['ecs', 'cli'].every(p =>
+        const allPositive = ['ecs', 'cil'].every(p =>
             Object.values(values[p]).every(v => v >= 0)
         );
         if (!allPositive) {
@@ -258,18 +258,18 @@ class DashboardApp {
         this.setLoading(true);
 
         const oldData = {};
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             oldData[p] = { ...this.data.products[p] };
         });
 
         // Update data
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             Object.assign(this.data.products[p], values[p]);
         });
 
         // Animate all values
         const animations = [];
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             animations.push(
                 this.animateValue(this.el[`${p}Disbursed`], oldData[p].disbursed, values[p].disbursed),
                 this.animateValue(this.el[`${p}Collected`], oldData[p].collected, values[p].collected),
@@ -278,8 +278,8 @@ class DashboardApp {
             );
         });
 
-        const oldCombined = oldData.ecs.disbursed + oldData.cli.disbursed;
-        const newCombined = values.ecs.disbursed + values.cli.disbursed;
+        const oldCombined = oldData.ecs.disbursed + oldData.cil.disbursed;
+        const newCombined = values.ecs.disbursed + values.cil.disbursed;
         animations.push(this.animateCombined(oldCombined, newCombined));
 
         await Promise.all(animations);
@@ -356,7 +356,7 @@ class DashboardApp {
     }
 
     updateProgressBars() {
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             const d = this.data.products[p];
             const disbPct = Math.min((d.disbursed / d.disbursementTarget) * 100, 100);
             const collPct = Math.min((d.collected / d.collectionTarget) * 100, 100);
@@ -369,55 +369,55 @@ class DashboardApp {
             }, 100);
         });
 
-        const combinedCurrent = this.data.products.ecs.disbursed + this.data.products.cli.disbursed;
+        const combinedCurrent = this.data.products.ecs.disbursed + this.data.products.cil.disbursed;
         const combinedPct = Math.min((combinedCurrent / this.data.combinedTarget) * 100, 100);
         this.el.combinedProgress.style.width = `${combinedPct}%`;
         this.el.combinedPercentage.textContent = `${Math.round(combinedPct)}%`;
     }
 
     updateStatus() {
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             this.el[`${p}Status`].className = 'product-status';
             this.el[`${p}Status`].textContent = '';
         });
 
         const ecs = this.data.products.ecs;
-        const cli = this.data.products.cli;
+        const cil = this.data.products.cil;
 
-        if (ecs.disbursed === 0 && cli.disbursed === 0) return;
+        if (ecs.disbursed === 0 && cil.disbursed === 0) return;
 
         const ecsScore = ((ecs.disbursed / ecs.disbursementTarget) + (ecs.collected / ecs.collectionTarget)) / 2 * 100;
-        const cliScore = ((cli.disbursed / cli.disbursementTarget) + (cli.collected / cli.collectionTarget)) / 2 * 100;
+        const cilScore = ((cil.disbursed / cil.disbursementTarget) + (cil.collected / cil.collectionTarget)) / 2 * 100;
 
         const ecsDone = ecs.disbursed >= ecs.disbursementTarget && ecs.collected >= ecs.collectionTarget;
-        const cliDone = cli.disbursed >= cli.disbursementTarget && cli.collected >= cli.collectionTarget;
+        const cilDone = cil.disbursed >= cil.disbursementTarget && cil.collected >= cil.collectionTarget;
 
-        if (ecsDone && cliDone) {
-            if (ecsScore > cliScore) {
+        if (ecsDone && cilDone) {
+            if (ecsScore > cilScore) {
                 this.setStatus('ecs', 'leading', 'Leading');
-                this.setStatus('cli', '', 'Complete');
-            } else if (cliScore > ecsScore) {
-                this.setStatus('cli', 'leading', 'Leading');
+                this.setStatus('cil', '', 'Complete');
+            } else if (cilScore > ecsScore) {
+                this.setStatus('cil', 'leading', 'Leading');
                 this.setStatus('ecs', '', 'Complete');
             } else {
                 this.setStatus('ecs', '', 'Tied');
-                this.setStatus('cli', '', 'Tied');
+                this.setStatus('cil', '', 'Tied');
             }
         } else if (ecsDone) {
             this.setStatus('ecs', 'leading', 'Complete');
-            this.setStatus('cli', 'trailing', 'In Progress');
-        } else if (cliDone) {
-            this.setStatus('cli', 'leading', 'Complete');
+            this.setStatus('cil', 'trailing', 'In Progress');
+        } else if (cilDone) {
+            this.setStatus('cil', 'leading', 'Complete');
             this.setStatus('ecs', 'trailing', 'In Progress');
-        } else if (ecsScore > cliScore) {
+        } else if (ecsScore > cilScore) {
             this.setStatus('ecs', 'leading', 'Leading');
-            this.setStatus('cli', 'trailing', 'Trailing');
-        } else if (cliScore > ecsScore) {
-            this.setStatus('cli', 'leading', 'Leading');
+            this.setStatus('cil', 'trailing', 'Trailing');
+        } else if (cilScore > ecsScore) {
+            this.setStatus('cil', 'leading', 'Leading');
             this.setStatus('ecs', 'trailing', 'Trailing');
         } else {
             this.setStatus('ecs', '', 'Tied');
-            this.setStatus('cli', '', 'Tied');
+            this.setStatus('cil', '', 'Tied');
         }
     }
 
@@ -428,7 +428,7 @@ class DashboardApp {
     }
 
     updateTargetAchievement() {
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             const d = this.data.products[p];
             const card = this.el.productCards[p];
             if (d.disbursed >= d.disbursementTarget && d.collected >= d.collectionTarget) {
@@ -441,25 +441,25 @@ class DashboardApp {
 
     updateSummary() {
         const ecs = this.data.products.ecs;
-        const cli = this.data.products.cli;
+        const cil = this.data.products.cil;
 
-        this.el.totalFreshLeads.textContent = ecs.freshLeads + cli.freshLeads;
-        this.el.totalAmountSummary.textContent = this.formatCurrency(ecs.totalAmount + cli.totalAmount);
-        this.el.totalDisbursedSummary.textContent = this.formatCurrency(ecs.disbursed + cli.disbursed);
-        this.el.totalCollectedSummary.textContent = this.formatCurrency(ecs.collected + cli.collected);
+        this.el.totalFreshLeads.textContent = ecs.freshLeads + cil.freshLeads;
+        this.el.totalAmountSummary.textContent = this.formatCurrency(ecs.totalAmount + cil.totalAmount);
+        this.el.totalDisbursedSummary.textContent = this.formatCurrency(ecs.disbursed + cil.disbursed);
+        this.el.totalCollectedSummary.textContent = this.formatCurrency(ecs.collected + cil.collected);
 
         this.el.ecsFreshSummary.textContent = ecs.freshLeads;
-        this.el.cliFreshSummary.textContent = cli.freshLeads;
+        this.el.cilFreshSummary.textContent = cil.freshLeads;
         this.el.ecsAmountSummary.textContent = this.formatCurrency(ecs.totalAmount);
-        this.el.cliAmountSummary.textContent = this.formatCurrency(cli.totalAmount);
+        this.el.cilAmountSummary.textContent = this.formatCurrency(cil.totalAmount);
         this.el.ecsDisbursedSummary.textContent = this.formatCurrency(ecs.disbursed);
-        this.el.cliDisbursedSummary.textContent = this.formatCurrency(cli.disbursed);
+        this.el.cilDisbursedSummary.textContent = this.formatCurrency(cil.disbursed);
         this.el.ecsCollectedSummary.textContent = this.formatCurrency(ecs.collected);
-        this.el.cliCollectedSummary.textContent = this.formatCurrency(cli.collected);
+        this.el.cilCollectedSummary.textContent = this.formatCurrency(cil.collected);
     }
 
     updateDisplay() {
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             const d = this.data.products[p];
             this.el[`${p}Disbursed`].textContent = this.formatCurrency(d.disbursed);
             this.el[`${p}Collected`].textContent = this.formatCurrency(d.collected);
@@ -469,7 +469,7 @@ class DashboardApp {
             this.el[`${p}CollectionTargetLabel`].textContent = `Target: ${this.formatCurrency(d.collectionTarget)}`;
         });
 
-        const combinedCurrent = this.data.products.ecs.disbursed + this.data.products.cli.disbursed;
+        const combinedCurrent = this.data.products.ecs.disbursed + this.data.products.cil.disbursed;
         this.el.combinedCurrent.textContent = this.formatCurrency(combinedCurrent);
         this.el.combinedTargetDisplay.textContent = this.formatCurrency(this.data.combinedTarget);
 
@@ -485,7 +485,7 @@ class DashboardApp {
     resetDashboard() {
         if (this.isAnimating) return;
 
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             this.data.products[p].disbursed = 0;
             this.data.products[p].collected = 0;
             this.data.products[p].freshLeads = 0;
@@ -502,7 +502,7 @@ class DashboardApp {
         this.saveToStorage();
 
         // Flash animation
-        const elements = ['ecs', 'cli'].flatMap(p => [
+        const elements = ['ecs', 'cil'].flatMap(p => [
             this.el[`${p}Disbursed`], this.el[`${p}Collected`],
             this.el[`${p}FreshLeads`], this.el[`${p}TotalAmount`]
         ]);
@@ -517,7 +517,7 @@ class DashboardApp {
 
     // ─── Sample Data ───
     loadSampleData(btn) {
-        ['ecs', 'cli'].forEach(p => {
+        ['ecs', 'cil'].forEach(p => {
             this.el[`${p}DisbursementInput`].value = btn.dataset[`${p}Disbursed`];
             this.el[`${p}CollectionInput`].value = btn.dataset[`${p}Collected`];
             this.el[`${p}FreshInput`].value = btn.dataset[`${p}Fresh`];

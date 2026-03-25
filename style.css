@@ -1,5 +1,5 @@
 /* ========================================
-   ECS & CLI Dashboard - Professional Theme
+   ECS & CIL Dashboard - Professional Theme
    ======================================== */
 
 :root {
@@ -24,10 +24,10 @@
     --ecs-secondary: #8b5cf6;
     --ecs-bg: rgba(59, 130, 246, 0.06);
     --ecs-border: rgba(59, 130, 246, 0.15);
-    --cli-primary: #10b981;
-    --cli-secondary: #06b6d4;
-    --cli-bg: rgba(16, 185, 129, 0.06);
-    --cli-border: rgba(16, 185, 129, 0.15);
+    --cil-primary: #10b981;
+    --cil-secondary: #06b6d4;
+    --cil-bg: rgba(16, 185, 129, 0.06);
+    --cil-border: rgba(16, 185, 129, 0.15);
 
     /* Status */
     --success: #10b981;
@@ -296,7 +296,7 @@ body {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--ecs-primary), var(--accent), var(--cli-primary));
+    background: linear-gradient(90deg, var(--ecs-primary), var(--accent), var(--cil-primary));
 }
 
 .target-hero-header {
@@ -417,7 +417,7 @@ body {
 }
 
 .progress-fill-hero {
-    background: linear-gradient(90deg, var(--ecs-primary), var(--accent), var(--cli-primary));
+    background: linear-gradient(90deg, var(--ecs-primary), var(--accent), var(--cil-primary));
 }
 
 .progress-fill-ecs {
@@ -428,11 +428,11 @@ body {
     background: linear-gradient(90deg, #8b5cf6, #7c3aed);
 }
 
-.progress-fill-cli {
+.progress-fill-cil {
     background: linear-gradient(90deg, #10b981, #059669);
 }
 
-.progress-fill-cli-alt {
+.progress-fill-cil-alt {
     background: linear-gradient(90deg, #06b6d4, #0891b2);
 }
 
@@ -567,8 +567,8 @@ body {
     border-top: 3px solid var(--ecs-primary);
 }
 
-.product-card[data-product="cli"] {
-    border-top: 3px solid var(--cli-primary);
+.product-card[data-product="cil"] {
+    border-top: 3px solid var(--cil-primary);
 }
 
 .product-header {
@@ -593,7 +593,7 @@ body {
 }
 
 .dot-ecs { background: var(--ecs-primary); box-shadow: 0 0 8px rgba(59, 130, 246, 0.4); }
-.dot-cli { background: var(--cli-primary); box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+.dot-cil { background: var(--cil-primary); box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
 
 .product-name {
     font-size: 1.35rem;
@@ -602,7 +602,7 @@ body {
 }
 
 .product-card[data-product="ecs"] .product-name { color: var(--ecs-primary); }
-.product-card[data-product="cli"] .product-name { color: var(--cli-primary); }
+.product-card[data-product="cil"] .product-name { color: var(--cil-primary); }
 
 .product-status {
     padding: 5px 14px;
