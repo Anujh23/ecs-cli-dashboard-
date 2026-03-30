@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECS & CIL - Performance Dashboard</title>
+    <title>ECS, CIL, LR & ERL - Performance Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,7 +22,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h1>ECS & CIL Dashboard</h1>
+                    <h1>ECS, CIL, LR & ERL Dashboard</h1>
                     <p class="brand-subtitle">Performance Tracker</p>
                 </div>
             </div>
@@ -83,6 +83,8 @@
                     <div class="summary-breakdown">
                         <span>ECS: <strong id="ecs-fresh-summary">0</strong></span>
                         <span>CIL: <strong id="cil-fresh-summary">0</strong></span>
+                        <span>LR: <strong id="lr-fresh-summary">0</strong></span>
+                        <span>ERL: <strong id="erl-fresh-summary">0</strong></span>
                     </div>
                 </div>
             </div>
@@ -96,6 +98,8 @@
                     <div class="summary-breakdown">
                         <span>ECS: <strong id="ecs-amount-summary">&#8377;0</strong></span>
                         <span>CIL: <strong id="cil-amount-summary">&#8377;0</strong></span>
+                        <span>LR: <strong id="lr-amount-summary">&#8377;0</strong></span>
+                        <span>ERL: <strong id="erl-amount-summary">&#8377;0</strong></span>
                     </div>
                 </div>
             </div>
@@ -109,6 +113,8 @@
                     <div class="summary-breakdown">
                         <span>ECS: <strong id="ecs-disbursed-summary">&#8377;0</strong></span>
                         <span>CIL: <strong id="cil-disbursed-summary">&#8377;0</strong></span>
+                        <span>LR: <strong id="lr-disbursed-summary">&#8377;0</strong></span>
+                        <span>ERL: <strong id="erl-disbursed-summary">&#8377;0</strong></span>
                     </div>
                 </div>
             </div>
@@ -122,6 +128,8 @@
                     <div class="summary-breakdown">
                         <span>ECS: <strong id="ecs-collected-summary">&#8377;0</strong></span>
                         <span>CIL: <strong id="cil-collected-summary">&#8377;0</strong></span>
+                        <span>LR: <strong id="lr-collected-summary">&#8377;0</strong></span>
+                        <span>ERL: <strong id="erl-collected-summary">&#8377;0</strong></span>
                     </div>
                 </div>
             </div>
@@ -318,6 +326,196 @@
                     </div>
                 </div>
             </div>
+
+            <!-- LR Product Card -->
+            <div class="product-card" data-product="lr">
+                <div class="product-header">
+                    <div class="product-title-group">
+                        <span class="product-dot dot-lr"></span>
+                        <h2 class="product-name">LR</h2>
+                    </div>
+                    <div class="product-status" id="lr-status"></div>
+                </div>
+
+                <!-- Fresh Leads -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Fresh Leads</h3>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="lr-fresh-leads">0</span>
+                        <span class="metric-label">Today's Count</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="number" id="lr-fresh-input" class="input" placeholder="e.g., 20" min="0">
+                    </div>
+                </div>
+
+                <!-- Total Amount -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Total Amount</h3>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="lr-total-amount">&#8377;0</span>
+                        <span class="metric-label">Today's Total</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="lr-amount-input" class="input" placeholder="e.g., 2000000" inputmode="numeric">
+                    </div>
+                </div>
+
+                <!-- Disbursement -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Disbursement</h3>
+                        <button class="btn btn-ghost btn-xs edit-target-btn" data-target="lr-disbursement" title="Edit Target">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="lr-disbursed">&#8377;0</span>
+                        <span class="metric-label" id="lr-disbursement-target-label">Target: &#8377;3,50,00,000</span>
+                    </div>
+                    <div class="target-edit-row hidden" id="lr-disbursement-target-edit">
+                        <input type="text" class="input input-sm" id="lr-disbursement-target-input" placeholder="Target amount" inputmode="numeric">
+                        <button class="btn btn-primary btn-xs target-save-btn" data-target="lr-disbursement">Save</button>
+                        <button class="btn btn-ghost btn-xs target-cancel-btn" data-target="lr-disbursement">Cancel</button>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-fill-lr" id="lr-disbursement-progress"></div>
+                        </div>
+                        <span class="progress-text" id="lr-disbursement-percentage">0%</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="lr-disbursement-input" class="input" placeholder="e.g., 3000000" inputmode="numeric">
+                    </div>
+                </div>
+
+                <!-- Collection -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Collection</h3>
+                        <button class="btn btn-ghost btn-xs edit-target-btn" data-target="lr-collection" title="Edit Target">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="lr-collected">&#8377;0</span>
+                        <span class="metric-label" id="lr-collection-target-label">Target: &#8377;3,00,00,000</span>
+                    </div>
+                    <div class="target-edit-row hidden" id="lr-collection-target-edit">
+                        <input type="text" class="input input-sm" id="lr-collection-target-input" placeholder="Target amount" inputmode="numeric">
+                        <button class="btn btn-primary btn-xs target-save-btn" data-target="lr-collection">Save</button>
+                        <button class="btn btn-ghost btn-xs target-cancel-btn" data-target="lr-collection">Cancel</button>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-fill-lr-alt" id="lr-collection-progress"></div>
+                        </div>
+                        <span class="progress-text" id="lr-collection-percentage">0%</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="lr-collection-input" class="input" placeholder="e.g., 3500000" inputmode="numeric">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ERL Product Card -->
+            <div class="product-card" data-product="erl">
+                <div class="product-header">
+                    <div class="product-title-group">
+                        <span class="product-dot dot-erl"></span>
+                        <h2 class="product-name">ERL</h2>
+                    </div>
+                    <div class="product-status" id="erl-status"></div>
+                </div>
+
+                <!-- Fresh Leads -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Fresh Leads</h3>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="erl-fresh-leads">0</span>
+                        <span class="metric-label">Today's Count</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="number" id="erl-fresh-input" class="input" placeholder="e.g., 15" min="0">
+                    </div>
+                </div>
+
+                <!-- Total Amount -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Total Amount</h3>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="erl-total-amount">&#8377;0</span>
+                        <span class="metric-label">Today's Total</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="erl-amount-input" class="input" placeholder="e.g., 1800000" inputmode="numeric">
+                    </div>
+                </div>
+
+                <!-- Disbursement -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Disbursement</h3>
+                        <button class="btn btn-ghost btn-xs edit-target-btn" data-target="erl-disbursement" title="Edit Target">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="erl-disbursed">&#8377;0</span>
+                        <span class="metric-label" id="erl-disbursement-target-label">Target: &#8377;4,00,00,000</span>
+                    </div>
+                    <div class="target-edit-row hidden" id="erl-disbursement-target-edit">
+                        <input type="text" class="input input-sm" id="erl-disbursement-target-input" placeholder="Target amount" inputmode="numeric">
+                        <button class="btn btn-primary btn-xs target-save-btn" data-target="erl-disbursement">Save</button>
+                        <button class="btn btn-ghost btn-xs target-cancel-btn" data-target="erl-disbursement">Cancel</button>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-fill-erl" id="erl-disbursement-progress"></div>
+                        </div>
+                        <span class="progress-text" id="erl-disbursement-percentage">0%</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="erl-disbursement-input" class="input" placeholder="e.g., 3200000" inputmode="numeric">
+                    </div>
+                </div>
+
+                <!-- Collection -->
+                <div class="metric-block">
+                    <div class="metric-header">
+                        <h3>Collection</h3>
+                        <button class="btn btn-ghost btn-xs edit-target-btn" data-target="erl-collection" title="Edit Target">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                    </div>
+                    <div class="metric-value-row">
+                        <span class="metric-value" id="erl-collected">&#8377;0</span>
+                        <span class="metric-label" id="erl-collection-target-label">Target: &#8377;3,50,00,000</span>
+                    </div>
+                    <div class="target-edit-row hidden" id="erl-collection-target-edit">
+                        <input type="text" class="input input-sm" id="erl-collection-target-input" placeholder="Target amount" inputmode="numeric">
+                        <button class="btn btn-primary btn-xs target-save-btn" data-target="erl-collection">Save</button>
+                        <button class="btn btn-ghost btn-xs target-cancel-btn" data-target="erl-collection">Cancel</button>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-fill-erl-alt" id="erl-collection-progress"></div>
+                        </div>
+                        <span class="progress-text" id="erl-collection-percentage">0%</span>
+                    </div>
+                    <div class="metric-input">
+                        <input type="text" id="erl-collection-input" class="input" placeholder="e.g., 4000000" inputmode="numeric">
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Action Bar -->
@@ -336,18 +534,24 @@
                 <button class="btn btn-ghost btn-sm sample-btn"
                     data-ecs-disbursed="35000000" data-ecs-collected="40000000"
                     data-cil-disbursed="38000000" data-cil-collected="45000000"
-                    data-ecs-fresh="25" data-cil-fresh="30"
-                    data-ecs-amount="2500000" data-cil-amount="3000000">Sample 1</button>
+                    data-lr-disbursed="30000000" data-lr-collected="28000000"
+                    data-erl-disbursed="32000000" data-erl-collected="30000000"
+                    data-ecs-fresh="25" data-cil-fresh="30" data-lr-fresh="20" data-erl-fresh="15"
+                    data-ecs-amount="2500000" data-cil-amount="3000000" data-lr-amount="2000000" data-erl-amount="1800000">Sample 1</button>
                 <button class="btn btn-ghost btn-sm sample-btn"
                     data-ecs-disbursed="25000000" data-ecs-collected="30000000"
                     data-cil-disbursed="20000000" data-cil-collected="25000000"
-                    data-ecs-fresh="15" data-cil-fresh="20"
-                    data-ecs-amount="1500000" data-cil-amount="2000000">Sample 2</button>
+                    data-lr-disbursed="18000000" data-lr-collected="15000000"
+                    data-erl-disbursed="22000000" data-erl-collected="20000000"
+                    data-ecs-fresh="15" data-cil-fresh="20" data-lr-fresh="12" data-erl-fresh="10"
+                    data-ecs-amount="1500000" data-cil-amount="2000000" data-lr-amount="1200000" data-erl-amount="1000000">Sample 2</button>
                 <button class="btn btn-ghost btn-sm sample-btn"
                     data-ecs-disbursed="44100000" data-ecs-collected="47386551"
                     data-cil-disbursed="45100000" data-cil-collected="53336813"
-                    data-ecs-fresh="50" data-cil-fresh="55"
-                    data-ecs-amount="5000000" data-cil-amount="5500000">Target Met</button>
+                    data-lr-disbursed="36000000" data-lr-collected="31000000"
+                    data-erl-disbursed="41000000" data-erl-collected="36000000"
+                    data-ecs-fresh="50" data-cil-fresh="55" data-lr-fresh="40" data-erl-fresh="35"
+                    data-ecs-amount="5000000" data-cil-amount="5500000" data-lr-amount="4000000" data-erl-amount="3500000">Target Met</button>
             </div>
         </section>
     </main>

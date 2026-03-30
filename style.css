@@ -1,5 +1,5 @@
 /* ========================================
-   ECS & CIL Dashboard - Professional Theme
+   ECS, CIL, LR & ERL Dashboard - Professional Theme
    ======================================== */
 
 :root {
@@ -28,6 +28,14 @@
     --cil-secondary: #06b6d4;
     --cil-bg: rgba(16, 185, 129, 0.06);
     --cil-border: rgba(16, 185, 129, 0.15);
+    --lr-primary: #f59e0b;
+    --lr-secondary: #ef4444;
+    --lr-bg: rgba(245, 158, 11, 0.06);
+    --lr-border: rgba(245, 158, 11, 0.15);
+    --erl-primary: #ec4899;
+    --erl-secondary: #f43f5e;
+    --erl-bg: rgba(236, 72, 153, 0.06);
+    --erl-border: rgba(236, 72, 153, 0.15);
 
     /* Status */
     --success: #10b981;
@@ -296,7 +304,7 @@ body {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--ecs-primary), var(--accent), var(--cil-primary));
+    background: linear-gradient(90deg, var(--ecs-primary), var(--cil-primary), var(--lr-primary), var(--erl-primary));
 }
 
 .target-hero-header {
@@ -417,7 +425,7 @@ body {
 }
 
 .progress-fill-hero {
-    background: linear-gradient(90deg, var(--ecs-primary), var(--accent), var(--cil-primary));
+    background: linear-gradient(90deg, var(--ecs-primary), var(--cil-primary), var(--lr-primary), var(--erl-primary));
 }
 
 .progress-fill-ecs {
@@ -434,6 +442,22 @@ body {
 
 .progress-fill-cil-alt {
     background: linear-gradient(90deg, #06b6d4, #0891b2);
+}
+
+.progress-fill-lr {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.progress-fill-lr-alt {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.progress-fill-erl {
+    background: linear-gradient(90deg, #ec4899, #db2777);
+}
+
+.progress-fill-erl-alt {
+    background: linear-gradient(90deg, #f43f5e, #e11d48);
 }
 
 .progress-text {
@@ -532,9 +556,10 @@ body {
 
 .summary-breakdown {
     display: flex;
-    gap: 16px;
+    gap: 10px;
     font-size: 0.75rem;
     color: var(--text-muted);
+    flex-wrap: wrap;
 }
 
 .summary-breakdown strong {
@@ -548,6 +573,12 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 24px;
     margin-bottom: 32px;
+}
+
+@media (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 .product-card {
@@ -569,6 +600,14 @@ body {
 
 .product-card[data-product="cil"] {
     border-top: 3px solid var(--cil-primary);
+}
+
+.product-card[data-product="lr"] {
+    border-top: 3px solid var(--lr-primary);
+}
+
+.product-card[data-product="erl"] {
+    border-top: 3px solid var(--erl-primary);
 }
 
 .product-header {
@@ -594,6 +633,8 @@ body {
 
 .dot-ecs { background: var(--ecs-primary); box-shadow: 0 0 8px rgba(59, 130, 246, 0.4); }
 .dot-cil { background: var(--cil-primary); box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+.dot-lr { background: var(--lr-primary); box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
+.dot-erl { background: var(--erl-primary); box-shadow: 0 0 8px rgba(236, 72, 153, 0.4); }
 
 .product-name {
     font-size: 1.35rem;
@@ -603,6 +644,8 @@ body {
 
 .product-card[data-product="ecs"] .product-name { color: var(--ecs-primary); }
 .product-card[data-product="cil"] .product-name { color: var(--cil-primary); }
+.product-card[data-product="lr"] .product-name { color: var(--lr-primary); }
+.product-card[data-product="erl"] .product-name { color: var(--erl-primary); }
 
 .product-status {
     padding: 5px 14px;

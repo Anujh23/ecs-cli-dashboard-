@@ -1,5 +1,6 @@
 class DashboardApp {
     constructor() {
+        this.productKeys = ['ecs', 'cil', 'lr', 'erl'];
         this.data = {
             combinedTarget: 90000000,
             products: {
@@ -16,6 +17,24 @@ class DashboardApp {
                     name: 'CIL',
                     disbursementTarget: 47500000,
                     collectionTarget: 54256582,
+                    disbursed: 0,
+                    collected: 0,
+                    freshLeads: 0,
+                    totalAmount: 0
+                },
+                lr: {
+                    name: 'LR',
+                    disbursementTarget: 35000000,
+                    collectionTarget: 30000000,
+                    disbursed: 0,
+                    collected: 0,
+                    freshLeads: 0,
+                    totalAmount: 0
+                },
+                erl: {
+                    name: 'ERL',
+                    disbursementTarget: 40000000,
+                    collectionTarget: 35000000,
                     disbursed: 0,
                     collected: 0,
                     freshLeads: 0,
@@ -38,11 +57,11 @@ class DashboardApp {
     // ─── Storage ───
     loadFromStorage() {
         try {
-            const saved = localStorage.getItem('ecs-cil-dashboard');
+            const saved = localStorage.getItem('ecs-cil-lr-erl-dashboard');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 this.data.combinedTarget = parsed.combinedTarget ?? this.data.combinedTarget;
-                ['ecs', 'cil'].forEach(key => {
+                this.productKeys.forEach(key => {
                     if (parsed.products && parsed.products[key]) {
                         Object.assign(this.data.products[key], parsed.products[key]);
                     }
@@ -53,7 +72,7 @@ class DashboardApp {
 
     saveToStorage() {
         try {
-            localStorage.setItem('ecs-cil-dashboard', JSON.stringify(this.data));
+            localStorage.setItem('ecs-cil-lr-erl-dashboard', JSON.stringify(this.data));
         } catch (e) { /* ignore */ }
     }
 
@@ -76,7 +95,7 @@ class DashboardApp {
         this.el.totalCollectedSummary = document.getElementById('total-collected-summary');
 
         // Product summary
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             this.el[`${p}FreshSummary`] = document.getElementById(`${p}-fresh-summary`);
             this.el[`${p}AmountSummary`] = document.getElementById(`${p}-amount-summary`);
             this.el[`${p}DisbursedSummary`] = document.getElementById(`${p}-disbursed-summary`);
@@ -84,7 +103,7 @@ class DashboardApp {
         });
 
         // Product cards
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             this.el[`${p}FreshLeads`] = document.getElementById(`${p}-fresh-leads`);
             this.el[`${p}TotalAmount`] = document.getElementById(`${p}-total-amount`);
             this.el[`${p}Disbursed`] = document.getElementById(`${p}-disbursed`);
@@ -108,10 +127,10 @@ class DashboardApp {
 
         this.el.updateBtn = document.getElementById('update-btn');
         this.el.resetBtn = document.getElementById('reset-btn');
-        this.el.productCards = {
-            ecs: document.querySelector('[data-product="ecs"]'),
-            cil: document.querySelector('[data-product="cil"]')
-        };
+        this.el.productCards = {};
+        this.productKeys.forEach(p => {
+            this.el.productCards[p] = document.querySelector(`[data-product="${p}"]`);
+        });
         this.sampleBtns = document.querySelectorAll('.sample-btn');
     }
 
@@ -236,7 +255,7 @@ class DashboardApp {
         if (this.isAnimating) return;
 
         const values = {};
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             values[p] = {
                 disbursed: parseInt(this.el[`${p}DisbursementInput`].value) || 0,
                 collected: parseInt(this.el[`${p}CollectionInput`].value) || 0,
@@ -246,7 +265,7 @@ class DashboardApp {
         });
 
         // Validate
-        const allPositive = ['ecs', 'cil'].every(p =>
+        const allPositive = this.productKeys.every(p =>
             Object.values(values[p]).every(v => v >= 0)
         );
         if (!allPositive) {
@@ -258,18 +277,18 @@ class DashboardApp {
         this.setLoading(true);
 
         const oldData = {};
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             oldData[p] = { ...this.data.products[p] };
         });
 
         // Update data
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             Object.assign(this.data.products[p], values[p]);
         });
 
         // Animate all values
         const animations = [];
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             animations.push(
                 this.animateValue(this.el[`${p}Disbursed`], oldData[p].disbursed, values[p].disbursed),
                 this.animateValue(this.el[`${p}Collected`], oldData[p].collected, values[p].collected),
@@ -278,8 +297,8 @@ class DashboardApp {
             );
         });
 
-        const oldCombined = oldData.ecs.disbursed + oldData.cil.disbursed;
-        const newCombined = values.ecs.disbursed + values.cil.disbursed;
+        const oldCombined = this.productKeys.reduce((sum, p) => sum + oldData[p].disbursed, 0);
+        const newCombined = this.productKeys.reduce((sum, p) => sum + values[p].disbursed, 0);
         animations.push(this.animateCombined(oldCombined, newCombined));
 
         await Promise.all(animations);
@@ -356,7 +375,7 @@ class DashboardApp {
     }
 
     updateProgressBars() {
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             const d = this.data.products[p];
             const disbPct = Math.min((d.disbursed / d.disbursementTarget) * 100, 100);
             const collPct = Math.min((d.collected / d.collectionTarget) * 100, 100);
@@ -369,56 +388,51 @@ class DashboardApp {
             }, 100);
         });
 
-        const combinedCurrent = this.data.products.ecs.disbursed + this.data.products.cil.disbursed;
+        const combinedCurrent = this.productKeys.reduce((sum, p) => sum + this.data.products[p].disbursed, 0);
         const combinedPct = Math.min((combinedCurrent / this.data.combinedTarget) * 100, 100);
         this.el.combinedProgress.style.width = `${combinedPct}%`;
         this.el.combinedPercentage.textContent = `${Math.round(combinedPct)}%`;
     }
 
     updateStatus() {
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             this.el[`${p}Status`].className = 'product-status';
             this.el[`${p}Status`].textContent = '';
         });
 
-        const ecs = this.data.products.ecs;
-        const cil = this.data.products.cil;
+        const allZero = this.productKeys.every(p => this.data.products[p].disbursed === 0);
+        if (allZero) return;
 
-        if (ecs.disbursed === 0 && cil.disbursed === 0) return;
+        const scores = {};
+        const done = {};
+        this.productKeys.forEach(p => {
+            const d = this.data.products[p];
+            scores[p] = ((d.disbursed / d.disbursementTarget) + (d.collected / d.collectionTarget)) / 2 * 100;
+            done[p] = d.disbursed >= d.disbursementTarget && d.collected >= d.collectionTarget;
+        });
 
-        const ecsScore = ((ecs.disbursed / ecs.disbursementTarget) + (ecs.collected / ecs.collectionTarget)) / 2 * 100;
-        const cilScore = ((cil.disbursed / cil.disbursementTarget) + (cil.collected / cil.collectionTarget)) / 2 * 100;
+        const maxScore = Math.max(...Object.values(scores));
+        const leadingProducts = this.productKeys.filter(p => scores[p] === maxScore);
 
-        const ecsDone = ecs.disbursed >= ecs.disbursementTarget && ecs.collected >= ecs.collectionTarget;
-        const cilDone = cil.disbursed >= cil.disbursementTarget && cil.collected >= cil.collectionTarget;
-
-        if (ecsDone && cilDone) {
-            if (ecsScore > cilScore) {
-                this.setStatus('ecs', 'leading', 'Leading');
-                this.setStatus('cil', '', 'Complete');
-            } else if (cilScore > ecsScore) {
-                this.setStatus('cil', 'leading', 'Leading');
-                this.setStatus('ecs', '', 'Complete');
+        this.productKeys.forEach(p => {
+            if (done[p]) {
+                if (leadingProducts.length === this.productKeys.length) {
+                    this.setStatus(p, '', 'Tied');
+                } else if (leadingProducts.includes(p)) {
+                    this.setStatus(p, 'leading', 'Leading');
+                } else {
+                    this.setStatus(p, '', 'Complete');
+                }
             } else {
-                this.setStatus('ecs', '', 'Tied');
-                this.setStatus('cil', '', 'Tied');
+                if (leadingProducts.includes(p) && leadingProducts.length < this.productKeys.length) {
+                    this.setStatus(p, 'leading', 'Leading');
+                } else if (leadingProducts.length === this.productKeys.length) {
+                    this.setStatus(p, '', 'Tied');
+                } else {
+                    this.setStatus(p, 'trailing', 'Trailing');
+                }
             }
-        } else if (ecsDone) {
-            this.setStatus('ecs', 'leading', 'Complete');
-            this.setStatus('cil', 'trailing', 'In Progress');
-        } else if (cilDone) {
-            this.setStatus('cil', 'leading', 'Complete');
-            this.setStatus('ecs', 'trailing', 'In Progress');
-        } else if (ecsScore > cilScore) {
-            this.setStatus('ecs', 'leading', 'Leading');
-            this.setStatus('cil', 'trailing', 'Trailing');
-        } else if (cilScore > ecsScore) {
-            this.setStatus('cil', 'leading', 'Leading');
-            this.setStatus('ecs', 'trailing', 'Trailing');
-        } else {
-            this.setStatus('ecs', '', 'Tied');
-            this.setStatus('cil', '', 'Tied');
-        }
+        });
     }
 
     setStatus(product, cls, text) {
@@ -428,7 +442,7 @@ class DashboardApp {
     }
 
     updateTargetAchievement() {
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             const d = this.data.products[p];
             const card = this.el.productCards[p];
             if (d.disbursed >= d.disbursementTarget && d.collected >= d.collectionTarget) {
@@ -440,26 +454,29 @@ class DashboardApp {
     }
 
     updateSummary() {
-        const ecs = this.data.products.ecs;
-        const cil = this.data.products.cil;
+        let totalFresh = 0, totalAmount = 0, totalDisbursed = 0, totalCollected = 0;
 
-        this.el.totalFreshLeads.textContent = ecs.freshLeads + cil.freshLeads;
-        this.el.totalAmountSummary.textContent = this.formatCurrency(ecs.totalAmount + cil.totalAmount);
-        this.el.totalDisbursedSummary.textContent = this.formatCurrency(ecs.disbursed + cil.disbursed);
-        this.el.totalCollectedSummary.textContent = this.formatCurrency(ecs.collected + cil.collected);
+        this.productKeys.forEach(p => {
+            const d = this.data.products[p];
+            totalFresh += d.freshLeads;
+            totalAmount += d.totalAmount;
+            totalDisbursed += d.disbursed;
+            totalCollected += d.collected;
 
-        this.el.ecsFreshSummary.textContent = ecs.freshLeads;
-        this.el.cilFreshSummary.textContent = cil.freshLeads;
-        this.el.ecsAmountSummary.textContent = this.formatCurrency(ecs.totalAmount);
-        this.el.cilAmountSummary.textContent = this.formatCurrency(cil.totalAmount);
-        this.el.ecsDisbursedSummary.textContent = this.formatCurrency(ecs.disbursed);
-        this.el.cilDisbursedSummary.textContent = this.formatCurrency(cil.disbursed);
-        this.el.ecsCollectedSummary.textContent = this.formatCurrency(ecs.collected);
-        this.el.cilCollectedSummary.textContent = this.formatCurrency(cil.collected);
+            this.el[`${p}FreshSummary`].textContent = d.freshLeads;
+            this.el[`${p}AmountSummary`].textContent = this.formatCurrency(d.totalAmount);
+            this.el[`${p}DisbursedSummary`].textContent = this.formatCurrency(d.disbursed);
+            this.el[`${p}CollectedSummary`].textContent = this.formatCurrency(d.collected);
+        });
+
+        this.el.totalFreshLeads.textContent = totalFresh;
+        this.el.totalAmountSummary.textContent = this.formatCurrency(totalAmount);
+        this.el.totalDisbursedSummary.textContent = this.formatCurrency(totalDisbursed);
+        this.el.totalCollectedSummary.textContent = this.formatCurrency(totalCollected);
     }
 
     updateDisplay() {
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             const d = this.data.products[p];
             this.el[`${p}Disbursed`].textContent = this.formatCurrency(d.disbursed);
             this.el[`${p}Collected`].textContent = this.formatCurrency(d.collected);
@@ -469,7 +486,7 @@ class DashboardApp {
             this.el[`${p}CollectionTargetLabel`].textContent = `Target: ${this.formatCurrency(d.collectionTarget)}`;
         });
 
-        const combinedCurrent = this.data.products.ecs.disbursed + this.data.products.cil.disbursed;
+        const combinedCurrent = this.productKeys.reduce((sum, p) => sum + this.data.products[p].disbursed, 0);
         this.el.combinedCurrent.textContent = this.formatCurrency(combinedCurrent);
         this.el.combinedTargetDisplay.textContent = this.formatCurrency(this.data.combinedTarget);
 
@@ -485,7 +502,7 @@ class DashboardApp {
     resetDashboard() {
         if (this.isAnimating) return;
 
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             this.data.products[p].disbursed = 0;
             this.data.products[p].collected = 0;
             this.data.products[p].freshLeads = 0;
@@ -502,10 +519,10 @@ class DashboardApp {
         this.saveToStorage();
 
         // Flash animation
-        const elements = ['ecs', 'cil'].flatMap(p => [
+        const elements = this.productKeys.flatMap(p => [
             this.el[`${p}Disbursed`], this.el[`${p}Collected`],
             this.el[`${p}FreshLeads`], this.el[`${p}TotalAmount`]
-        ]);
+        ]).filter(Boolean);
         elements.push(this.el.combinedCurrent);
         elements.forEach(el => {
             el.classList.add('updating');
@@ -517,7 +534,7 @@ class DashboardApp {
 
     // ─── Sample Data ───
     loadSampleData(btn) {
-        ['ecs', 'cil'].forEach(p => {
+        this.productKeys.forEach(p => {
             this.el[`${p}DisbursementInput`].value = btn.dataset[`${p}Disbursed`];
             this.el[`${p}CollectionInput`].value = btn.dataset[`${p}Collected`];
             this.el[`${p}FreshInput`].value = btn.dataset[`${p}Fresh`];
